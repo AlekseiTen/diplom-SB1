@@ -13,11 +13,11 @@ class UserAPITests(APITestCase):
             "email": "ivan@example.com",
             "password": "P4$$W0RD",
             "phone": "1234567890",
-            "role": "user"
+            "role": "user",
         }
-        self.create_url = reverse('users:register')
-        self.reset_password_request_url = reverse('users:reset_password_request')
-        self.reset_password_confirm_url = reverse('users:reset_password_confirm')
+        self.create_url = reverse("users:register")
+        self.reset_password_request_url = reverse("users:reset_password_request")
+        self.reset_password_confirm_url = reverse("users:reset_password_confirm")
 
     def test_create_user(self):
         """Тест на создание пользователя"""
@@ -33,14 +33,19 @@ class UserAPITests(APITestCase):
             email=self.user_data["email"],
             phone=self.user_data["phone"],
             role=self.user_data["role"],
-            is_active=True  # Убедитесь, что пользователь активен
+            is_active=True,  # Убедитесь, что пользователь активен
         )
         user.set_password(self.user_data["password"])  # Хешируем пароль
         user.save()
 
-        response = self.client.post(self.reset_password_request_url, {"email": self.user_data["email"]})
+        response = self.client.post(
+            self.reset_password_request_url, {"email": self.user_data["email"]}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn("Ссылка для сброса пароля отправлена на ваш email.", response.data["message"])
+        self.assertIn(
+            "Ссылка для сброса пароля отправлена на ваш email.",
+            response.data["message"],
+        )
 
     def test_password_reset_confirm(self):
         """Тест на подтверждение сброса пароля"""
@@ -50,23 +55,22 @@ class UserAPITests(APITestCase):
             email=self.user_data["email"],
             phone=self.user_data["phone"],
             role=self.user_data["role"],
-            is_active=True
+            is_active=True,
         )
         user.set_password(self.user_data["password"])  # Хешируем пароль
         user.save()
 
         # Генерация токена (в реальном сценарии это должно происходить в методе сброса пароля)
-        token = 'testtoken'  # Пример токена для теста
+        token = "testtoken"  # Пример токена для теста
         user.token = token
         user.save()
 
         new_password = "NewP4$$W0RD"
 
-        response = self.client.post(self.reset_password_confirm_url, {
-            "uid": user.id,
-            "token": token,
-            "new_password": new_password
-        })
+        response = self.client.post(
+            self.reset_password_confirm_url,
+            {"uid": user.id, "token": token, "new_password": new_password},
+        )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 

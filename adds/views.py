@@ -14,7 +14,9 @@ class AdViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticatedOrReadOnly,
         IsAdminOrOwnerOrReadOnly,
     ]
-    filter_backends = [DjangoFilterBackend, ]
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
     filterset_class = AdsFilter  # Поиск по названию
 
     def perform_create(self, serializer):

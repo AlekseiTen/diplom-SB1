@@ -7,8 +7,9 @@ class AdsFilter(django_filters.FilterSet):
     """
     Фильтр для модели объявления
     """
-    title = django_filters.CharFilter(lookup_expr='icontains')
+
+    title = django_filters.CharFilter(lookup_expr="icontains")
 
     class Meta:
         model = Ad
-        fields = ['title']
+        fields = ["title"]
