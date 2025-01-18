@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, permissions
 
@@ -36,7 +37,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         # Извлекаем ID объявления из URL (используем параметр ad_id)
         ad_id = self.kwargs["ad_id"]
-        ad = Ad.objects.get(id=ad_id)
+        ad = get_object_or_404(Ad, id=ad_id)
         serializer.save(
             author=self.request.user, ad=ad
         )  # Привязываем комментарий к объявлению
