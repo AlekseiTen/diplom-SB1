@@ -1,5 +1,6 @@
 import secrets
 
+from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -19,11 +20,16 @@ class UserCreateAPIView(CreateAPIView):
     permission_classes = (AllowAny,)
 
     def perform_create(self, serializer):
-        """Создаём нового пользователя, и хешируем ему пароль"""
+        """Создаём нового пользователя и сразу хешируем пароль"""
+        # Получаем данные из сериализатора
+        user_data = serializer.validated_data
 
-        user = serializer.save(is_active=True)
-        user.set_password(user.password)
-        user.save()
+        # Хешируем пароль перед сохранением
+        user_data['password'] = make_password(user_data['password'])  # Хешируем пароль
+        user_data['is_active'] = True  # Устанавливаем is_active сразу
+
+        # Сохраняем пользователя с хешированным паролем
+        serializer.save(**user_data)
 
 
 class PasswordResetRequestAPIView(APIView):
