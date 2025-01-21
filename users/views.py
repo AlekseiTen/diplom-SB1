@@ -53,10 +53,11 @@ class PasswordResetRequestAPIView(APIView):
         user.token = token
         user.save()
 
-        # Формируем ссылку для сброса пароля
+        #  необходима для обеспечения динамичного формирования URL
         host = request.get_host()
         uid = user.id  # Получаем идентификатор пользователя
-        url = f"https://{host}/users/reset-password/{uid}/{token}/"  # Ссылка на сброс пароля с токеном
+        # Ссылка на сброс пароля с токеном
+        url = f"https://{host}/users/reset-password/{uid}/{token}/"
 
         # Отправляем email с ссылкой для сброса пароля
         send_mail(
